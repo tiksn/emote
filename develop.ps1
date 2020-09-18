@@ -1,3 +1,5 @@
+$ErrorActionPreference = 'Stop'
+
 virtualenv .env
 .\.env\Scripts\activate.ps1
 
