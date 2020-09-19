@@ -5,17 +5,23 @@ from knack import CLI, ArgumentsContext, CLICommandsLoader
 from knack.commands import CommandGroup
 
 
-def repository_update(URL):
+def update_repository(URL):
     return f'{URL} not implemented'
 
+def fetch_source(URL):
+    return f'{URL} not implemented'
 class MyCommandsLoader(CLICommandsLoader):
     def load_command_table(self, args):
         with CommandGroup(self, 'repository', '__main__#{}') as g:
-            g.command('update', 'repository_update')
+            g.command('update', 'update_repository')
+        with CommandGroup(self, 'source', '__main__#{}') as g:
+            g.command('fetch', 'fetch_source')
         return OrderedDict(self.command_table)
 
     def load_arguments(self, command):
         with ArgumentsContext(self, 'repository update') as ac:
+            ac.argument('URL', type=str)
+        with ArgumentsContext(self, 'source fetch') as ac:
             ac.argument('URL', type=str)
         super(MyCommandsLoader, self).load_arguments(command)
 
