@@ -10,6 +10,7 @@ def update_repository(kind):
 
 def fetch_source(kind):
     return f'{kind} not implemented'
+
 class MyCommandsLoader(CLICommandsLoader):
     def load_command_table(self, args):
         with CommandGroup(self, 'repository', '__main__#{}') as g:
@@ -20,9 +21,9 @@ class MyCommandsLoader(CLICommandsLoader):
 
     def load_arguments(self, command):
         with ArgumentsContext(self, 'repository update') as ac:
-            ac.argument('URL', type=str)
+            ac.argument('kind', type=str)
         with ArgumentsContext(self, 'source fetch') as ac:
-            ac.argument('URL', type=str)
+            ac.argument('kind', type=str)
         super(MyCommandsLoader, self).load_arguments(command)
 
 
