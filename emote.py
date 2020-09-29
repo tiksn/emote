@@ -5,11 +5,11 @@ from knack import CLI, ArgumentsContext, CLICommandsLoader
 from knack.commands import CommandGroup
 
 
-def update_repository(URL):
-    return f'{URL} not implemented'
+def update_repository(kind):
+    return f'{kind} not implemented'
 
-def fetch_source(URL):
-    return f'{URL} not implemented'
+def fetch_source(kind):
+    return f'{kind} not implemented'
 class MyCommandsLoader(CLICommandsLoader):
     def load_command_table(self, args):
         with CommandGroup(self, 'repository', '__main__#{}') as g:
