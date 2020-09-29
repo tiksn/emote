@@ -8,14 +8,11 @@ from knack.commands import CommandGroup
 def update_repository(kind):
     return f'{kind} not implemented'
 
-def fetch_source(kind):
-    return f'{kind} not implemented'
-
 class MyCommandsLoader(CLICommandsLoader):
     def load_command_table(self, args):
         with CommandGroup(self, 'repository', '__main__#{}') as g:
             g.command('update', 'update_repository')
-        with CommandGroup(self, 'source', '__main__#{}') as g:
+        with CommandGroup(self, 'source', 'sources.source#{}') as g:
             g.command('fetch', 'fetch_source')
         return OrderedDict(self.command_table)
 
