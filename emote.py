@@ -8,7 +8,7 @@ class MyCommandsLoader(CLICommandsLoader):
     def load_command_table(self, args):
         with CommandGroup(self, 'repository', 'repository#{}') as g:
             g.command('update', 'update_repository')
-        with CommandGroup(self, 'source', 'sources.source#{}') as g:
+        with CommandGroup(self, 'source', 'source#{}') as g:
             g.command('fetch', 'fetch_source')
         return OrderedDict(self.command_table)
 
