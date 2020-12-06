@@ -1,7 +1,13 @@
 $ErrorActionPreference = 'Stop'
 
 virtualenv .env
-.\.env\Scripts\activate.ps1
+
+if ($IsWindows) {
+    .\.env\Scripts\activate.ps1
+}
+elseif ($IsLinux) {
+    .\.env\bin\activate.ps1
+}
 
 python -m pip install --upgrade pip
 pip install -r requirements.txt
