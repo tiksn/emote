@@ -21,9 +21,6 @@ class CharacterListSpider(scrapy.Spider):
                     ),
                 }
 
-        for next_page in response.css("a.next-posts-link"):
-            yield response.follow(next_page, self.parse)
-
 
 def fetch_source():
     process = CrawlerProcess()
