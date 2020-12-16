@@ -27,6 +27,15 @@ class CharacterListSpider(scrapy.Spider):
 
 def fetch_source():
     process = CrawlerProcess()
+    results = []
     process.crawl(CharacterListSpider)
-    result = process.start()
-    return '"Summertime Saga" not implemented'
+
+    def crawler_results(item, response, spider):
+        results.append(item)
+
+    for p in process.crawlers:
+        p.signals.connect(crawler_results, signal=scrapy.signals.item_scraped)
+
+    process.start()
+
+    return results
