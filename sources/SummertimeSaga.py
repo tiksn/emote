@@ -1,5 +1,8 @@
 import scrapy
 from scrapy.crawler import CrawlerProcess
+from knack.log import get_logger
+
+logger = get_logger(__name__)
 
 
 class CharacterListSpider(scrapy.Spider):
