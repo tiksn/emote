@@ -12,7 +12,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "Fetch Summertime Saga",
+            "name": "Fetch Summertime Saga Source",
             "type": "python",
             "request": "launch",
             "program": "emote.py",
