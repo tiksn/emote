@@ -10,6 +10,20 @@
             "request": "launch",
             "program": "emote.py",
             "console": "integratedTerminal"
+        },
+        {
+            "name": "Fetch Summertime Saga",
+            "type": "python",
+            "request": "launch",
+            "program": "emote.py",
+            "args": [
+                "source",
+                "fetch",
+                "--debug",
+                "--kind",
+                "SummertimeSaga"
+            ],
+            "console": "integratedTerminal"
         }
     ]
 }
