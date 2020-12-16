@@ -12,7 +12,10 @@ class CharacterListSpider(scrapy.Spider):
                 yield {
                     "Name": character.xpath(
                         'div[@class="gallerytext"]/p/a/text()'
-                    ).get()
+                    ).get(),
+                    "Thumbnail": response.urljoin(
+                        character.xpath('div[@class="thumb"]/div/a/img/@src').get()
+                    ),
                 }
 
         for next_page in response.css("a.next-posts-link"):
