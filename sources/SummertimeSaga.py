@@ -13,6 +13,9 @@ class CharacterListSpider(scrapy.Spider):
                     "Name": character.xpath(
                         'div[@class="gallerytext"]/p/a/text()'
                     ).get(),
+                    "Profile": response.urljoin(
+                        character.xpath('div[@class="gallerytext"]/p/a/@href').get()
+                    ),
                     "Thumbnail": response.urljoin(
                         character.xpath('div[@class="thumb"]/div/a/img/@src').get()
                     ),
