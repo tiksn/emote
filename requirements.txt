@@ -1,3 +1,4 @@
 doltpy>=1.0.20
+ipfshttpclient>=0.6.1
 knack>=0.7.2
 Scrapy>=2.3.0
