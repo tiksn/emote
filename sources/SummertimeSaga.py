@@ -1,3 +1,4 @@
+from source import Character
 import scrapy
 from scrapy.crawler import CrawlerProcess
 from knack.log import get_logger
@@ -38,4 +39,7 @@ def fetch_source():
 
     process.start()
 
-    return results
+    return [
+        Character(name=r["Name"], profile=r["Profile"], thumbnail=r["Thumbnail"])
+        for r in results
+    ]
