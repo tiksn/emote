@@ -1,4 +1,4 @@
-doltpy>=1.0.20
-ipfshttpclient>=0.6.1
-knack>=0.7.2
-Scrapy>=2.3.0
+# doltpy>=2.0.13
+ipfshttpclient>=0.7.0
+knack>=0.10.0
+Scrapy>=2.7.1
