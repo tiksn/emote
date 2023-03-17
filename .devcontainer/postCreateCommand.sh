@@ -16,9 +16,9 @@ cd /tmp
 # cmake --version
 
 cd /tmp
-wget https://dist.ipfs.io/go-ipfs/v0.16.0/go-ipfs_v0.16.0_linux-amd64.tar.gz
-tar -xvzf go-ipfs_v0.16.0_linux-amd64.tar.gz
-cd go-ipfs
+wget https://dist.ipfs.tech/kubo/v0.18.1/kubo_v0.18.1_linux-amd64.tar.gz
+tar -xvzf kubo_v0.18.1_linux-amd64.tar.gz
+cd kubo
 sudo bash install.sh
 ipfs init
 
