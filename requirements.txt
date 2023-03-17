@@ -1,0 +1,4 @@
+# doltpy>=2.0.13
+ipfshttpclient>=0.7.0
+knack>=0.10.0
+Scrapy>=2.7.1

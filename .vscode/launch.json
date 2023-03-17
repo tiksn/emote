@@ -1,0 +1,29 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "List Command Groups",
+            "type": "python",
+            "request": "launch",
+            "program": "emote.py",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Fetch Summertime Saga Source",
+            "type": "python",
+            "request": "launch",
+            "program": "emote.py",
+            "args": [
+                "source",
+                "fetch",
+                "--debug",
+                "--kind",
+                "SummertimeSaga"
+            ],
+            "console": "integratedTerminal"
+        }
+    ]
+}
