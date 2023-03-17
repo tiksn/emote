@@ -21,11 +21,13 @@
 	},
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
-		"ms-python.python",
+		"ms-vscode.powershell",
 		"editorconfig.editorconfig",
+		"github.vscode-pull-request-github",
+		"ms-python.python",
 		"ms-python.vscode-pylance",
-		"visualstudioexptteam.vscodeintellicode",
-		"ms-vscode.powershell"
+		"ms-vsliveshare.vsliveshare-pack",
+		"visualstudioexptteam.vscodeintellicode"
 	],
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
