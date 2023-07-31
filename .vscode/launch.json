@@ -24,6 +24,18 @@
                 "SummertimeSaga"
             ],
             "console": "integratedTerminal"
+        },
+        {
+            "name": "Update Repository",
+            "type": "python",
+            "request": "launch",
+            "program": "emote.py",
+            "args": [
+                "repository",
+                "update",
+                "--debug"
+            ],
+            "console": "integratedTerminal"
         }
     ]
 }
