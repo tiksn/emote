@@ -19,13 +19,13 @@ class CharacterListSpider(scrapy.Spider):
         for characterGroup in response.xpath('//*[@id="mw-content-text"]/div/ul'):
             for character in characterGroup.xpath("li/div"):
                 yield {
-                    "Name": character.xpath(
+                    "name": character.xpath(
                         'div[@class="gallerytext"]/p/a/text()'
                     ).get(),
-                    "Profile": response.urljoin(
+                    "profile_url": response.urljoin(
                         character.xpath('div[@class="gallerytext"]/p/a/@href').get()
                     ),
-                    "Thumbnail": response.urljoin(
+                    "profile_picture_url": response.urljoin(
                         character.xpath('div[@class="thumb"]/div/a/img/@src').get()
                     ),
                 }
@@ -45,6 +45,11 @@ def fetch_source():
     process.start()
 
     return [
-        Character(name=r["Name"], profile=r["Profile"], thumbnail=r["Thumbnail"])
+        Character(
+            first_name=r["name"],
+            last_name='',
+            full_name=r["name"],
+            profile_url=r["profile_url"],
+            profile_picture_url=r["profile_picture_url"])
         for r in results
     ]
