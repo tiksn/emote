@@ -23,7 +23,7 @@ def import_sources():
 
 
 def fetch_source(kind: str):
-    sources = import_sources()
-    source = sources[kind]
+    imported_sources = import_sources()
+    source = imported_sources[kind]
     fetch = getattr(source, "fetch_source")
     return fetch()
