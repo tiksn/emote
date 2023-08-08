@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from source import Character
 import scrapy
 from scrapy.crawler import CrawlerProcess
@@ -5,12 +7,15 @@ from knack.log import get_logger
 
 logger = get_logger(__name__)
 
+source_id = UUID('185356be-38ed-4beb-9af1-5f19057526a3')
+source_name = "Summertime Saga"
+
 
 class CharacterListSpider(scrapy.Spider):
     name = "CharacterListSpider"
     start_urls = ["https://wiki.summertimesaga.com/Characters"]
 
-    def parse(self, response):
+    def parse(self, response, **kwargs):
         for characterGroup in response.xpath('//*[@id="mw-content-text"]/div/ul'):
             for character in characterGroup.xpath("li/div"):
                 yield {
