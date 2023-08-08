@@ -12,3 +12,4 @@ gig -list python, visualstudiocode, pycharm+all, intellij+all, powershell
 
 Add-Content -Path .\.gitignore -Value '# Repository Specific' -Encoding ascii
 Add-Content -Path .\.gitignore -Value '.idea/' -Encoding ascii
+Add-Content -Path .\.gitignore -Value '.trash' -Encoding ascii

@@ -1,6 +1,10 @@
 import os
+import pickle
+
 import sources
 
+
+# import os.path
 
 class Character:
     def __init__(self, name, profile, thumbnail):
@@ -23,7 +27,25 @@ def import_sources():
 
 
 def fetch_source(kind: str):
-    sources = import_sources()
-    source = sources[kind]
+    trash_directory = '.trash'
+    os.makedirs(trash_directory, exist_ok=True)
+    pickle_path = os.path.join(trash_directory, 'sources.pickle')
+    pickle_data = {}
+
+    if os.path.exists(pickle_path):
+        with open(pickle_path, 'rb') as f:
+            pickle_data = pickle.load(f)
+
+    imported_sources = import_sources()
+    source = imported_sources[kind]
+    source_data = {
+        "id": source.source_id,
+        "source_name": source.source_name
+    }
     fetch = getattr(source, "fetch_source")
-    return fetch()
+    characters = fetch()
+    source_data["characters"] = characters
+    pickle_data[source.source_id] = source_data
+
+    with open(pickle_path, 'wb') as f:
+        pickle.dump(pickle_data, f, protocol=pickle.HIGHEST_PROTOCOL)
