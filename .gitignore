@@ -346,3 +346,4 @@ pyrightconfig.json
 
 # Repository Specific
 .idea/
+.trash
