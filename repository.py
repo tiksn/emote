@@ -1,2 +1,2 @@
-def update_repository(kind):
-    return f'{kind} not implemented'
+def update_repository():
+    return 'Not implemented'
