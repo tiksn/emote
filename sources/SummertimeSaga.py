@@ -1,3 +1,4 @@
+import uuid
 from uuid import UUID
 
 from source import Character
@@ -49,6 +50,7 @@ def fetch_source():
 
 def dict_to_character(result: dict[str, str]):
     return Character(
+            _id=uuid.uuid5(source_id, result["profile_url"]),
             first_name=result["name"],
             last_name='',
             full_name=result["name"],
