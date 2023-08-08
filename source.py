@@ -7,7 +7,8 @@ import sources
 # import os.path
 
 class Character:
-    def __init__(self, first_name, last_name, full_name, profile_url, profile_picture_url):
+    def __init__(self, _id, first_name, last_name, full_name, profile_url, profile_picture_url):
+        self.ID = _id
         self.FirstName = first_name
         self.LastName = last_name
         self.FullName = full_name
@@ -55,6 +56,7 @@ def fetch_source(kind: str):
 
 def character_to_dict(character: Character):
     return {
+        'id': character.ID,
         'first_name': character.FirstName,
         'last_name': character.LastName,
         'full_name': character.FullName,
