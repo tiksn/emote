@@ -7,10 +7,12 @@ import sources
 # import os.path
 
 class Character:
-    def __init__(self, name, profile, thumbnail):
-        self.Name = name
-        self.Profile = profile
-        self.Thumbnail = thumbnail
+    def __init__(self, first_name, last_name, full_name, profile_url, profile_picture_url):
+        self.FirstName = first_name
+        self.LastName = last_name
+        self.FullName = full_name
+        self.ProfileUrl = profile_url
+        self.ProfilePictureUrl = profile_picture_url
 
 
 def module_names():
@@ -44,7 +46,7 @@ def fetch_source(kind: str):
     }
     fetch = getattr(source, "fetch_source")
     characters = fetch()
-    source_data["characters"] = map(character_to_dict, characters)
+    source_data["characters"] = list(map(character_to_dict, characters))
     pickle_data[source.source_id] = source_data
 
     with open(pickle_path, 'wb') as f:
@@ -53,7 +55,9 @@ def fetch_source(kind: str):
 
 def character_to_dict(character: Character):
     return {
-        'name': character.Name,
-        'profile_url': character.Profile,
-        'thumbnail_url': character.Thumbnail,
+        'first_name': character.FirstName,
+        'last_name': character.LastName,
+        'full_name': character.FullName,
+        'profile_url': character.ProfileUrl,
+        'profile_picture_url': character.ProfilePictureUrl,
     }
