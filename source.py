@@ -44,8 +44,16 @@ def fetch_source(kind: str):
     }
     fetch = getattr(source, "fetch_source")
     characters = fetch()
-    source_data["characters"] = characters
+    source_data["characters"] = map(character_to_dict, characters)
     pickle_data[source.source_id] = source_data
 
     with open(pickle_path, 'wb') as f:
         pickle.dump(pickle_data, f, protocol=pickle.HIGHEST_PROTOCOL)
+
+
+def character_to_dict(character: Character):
+    return {
+        'name': character.Name,
+        'profile_url': character.Profile,
+        'thumbnail_url': character.Thumbnail,
+    }
