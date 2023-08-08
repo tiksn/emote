@@ -3,8 +3,10 @@ import pickle
 
 import sources
 
+from knack.log import get_logger
 
-# import os.path
+logger = get_logger(__name__)
+
 
 class Character:
     def __init__(self, _id, first_name, last_name, full_name, profile_url, profile_picture_url):
@@ -43,7 +45,7 @@ def fetch_source(kind: str):
     source = imported_sources[kind]
     source_data = {
         "id": source.source_id,
-        "source_name": source.source_name
+        "name": source.source_name
     }
     fetch = getattr(source, "fetch_source")
     characters = fetch()
