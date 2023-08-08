@@ -44,12 +44,13 @@ def fetch_source():
 
     process.start()
 
-    return [
-        Character(
-            first_name=r["name"],
+    return list(map(dict_to_character, results))
+
+
+def dict_to_character(result: dict[str, str]):
+    return Character(
+            first_name=result["name"],
             last_name='',
-            full_name=r["name"],
-            profile_url=r["profile_url"],
-            profile_picture_url=r["profile_picture_url"])
-        for r in results
-    ]
+            full_name=result["name"],
+            profile_url=result["profile_url"],
+            profile_picture_url=result["profile_picture_url"])
