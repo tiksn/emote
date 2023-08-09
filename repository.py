@@ -2,7 +2,7 @@ import os
 import pickle
 
 from knack.log import get_logger
-from sqlalchemy import insert, create_engine, text, MetaData, Table, select
+from sqlalchemy import insert, create_engine, text, MetaData, Table, select, update
 from sqlalchemy.sql.functions import count
 
 logger = get_logger(__name__)
@@ -33,5 +33,10 @@ def update_repository():
                     stmt = insert(sources_table).values([
                         {'id': v['id'].bytes, 'name': v['name']}
                     ])
+                    conn.execute(stmt)
+                else:
+                    stmt = update(sources_table).filter_by(id = v['id'].bytes).values(
+                        {'name': v['name']}
+                    )
                     conn.execute(stmt)
             conn.commit()
