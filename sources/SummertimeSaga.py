@@ -19,17 +19,30 @@ class CharacterListSpider(scrapy.Spider):
     def parse(self, response, **kwargs):
         for characterGroup in response.xpath('//*[@id="mw-content-text"]/div/ul'):
             for character in characterGroup.xpath("li/div"):
+                profile_url = response.urljoin(
+                    character.xpath('div[@class="gallerytext"]/p/a/@href').get()
+                )
+                profile = dict()
+                yield scrapy.Request(profile_url, self.parse_profile, cb_kwargs={"profile": profile})
                 yield {
                     "name": character.xpath(
                         'div[@class="gallerytext"]/p/a/text()'
                     ).get(),
-                    "profile_url": response.urljoin(
-                        character.xpath('div[@class="gallerytext"]/p/a/@href').get()
-                    ),
-                    "profile_picture_url": response.urljoin(
+                    "profile": profile,
+                    "profile_url": profile_url,
+                    "thumbnail_url": response.urljoin(
                         character.xpath('div[@class="thumb"]/div/a/img/@src').get()
                     ),
                 }
+
+    def parse_profile(self, response, profile: dict[str, str]):
+        infobox = response.xpath('//*[@id="mw-content-text"]/div/table/tbody')
+        profile["title"] = response.xpath('//*[@id="firstHeading"]/text()').get()
+        profile["name"] = infobox.xpath('tr[1]/th/span/text()').get()
+        profile["full_length_portrait_url"] = response.urljoin(
+                infobox.xpath('tr[2]/td/a/img/@src').get()
+            )
+        profile["gender"] = infobox.xpath('tr[4]/td/text()').get()
 
 
 def fetch_source():
@@ -50,9 +63,9 @@ def fetch_source():
 
 def dict_to_character(result: dict[str, str]):
     return Character(
-            _id=uuid.uuid5(source_id, result["profile_url"]),
-            first_name=result["name"],
-            last_name='',
-            full_name=result["name"],
-            profile_url=result["profile_url"],
-            profile_picture_url=result["profile_picture_url"])
+        _id=uuid.uuid5(source_id, result["profile_url"]),
+        first_name=result["name"],
+        last_name='',
+        full_name=result["name"],
+        profile_url=result["profile_url"],
+        profile_picture_url=result["thumbnail_url"])
