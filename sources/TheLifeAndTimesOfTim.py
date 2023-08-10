@@ -20,15 +20,40 @@ class CharacterListSpider(scrapy.Spider):
         for characterList in response.xpath('//*[@id="mw-content-text"]/div[3]'):
             for characterGroup in characterList.xpath('div'):
                 for character in characterGroup.xpath("ul/li"):
+                    profile_url = response.urljoin(
+                        character.xpath('a/@href').get()
+                    )
+                    profile = dict()
+                    yield scrapy.Request(profile_url, self.parse_profile, cb_kwargs={"profile": profile})
                     yield {
                         "name": character.xpath('a/text()').get(),
-                        "profile_url": response.urljoin(
-                            character.xpath('a/@href').get()
-                        ),
-                        "profile_picture_url": response.urljoin(
+                        "profile": profile,
+                        "profile_url": profile_url,
+                        "thumbnail_url": response.urljoin(
                             character.xpath('div/a/img/@src').get()
                         ),
                     }
+
+    def parse_profile(self, response, profile: dict[str, str]):
+        infobox = response.xpath('//*[@id="mw-content-text"]/div/table/tbody')
+        profile["title"] = response.xpath('//*[@id="firstHeading"]/span/text()').get()
+        profile["name"] = infobox.xpath('tr[1]/th/text()').get()
+        profile["full_length_portrait_url"] = response.urljoin(
+            infobox.xpath('tr[2]/td/a/img/@src').get()
+        )
+
+        for information in infobox.xpath('tr'):
+            information_name = information.xpath('td[1]/b/text()').get()
+            information_value = information.xpath('td[2]/text()').get()
+
+            if information_name is not None and information_value is not None:
+                information_name = information_name.lower().strip()
+                information_value = information_value.strip()
+
+                if information_name == 'species':
+                    profile["species"] = information_value
+                elif information_name == 'gender':
+                    profile["gender"] = information_value
 
 
 def fetch_source():
@@ -54,4 +79,4 @@ def dict_to_character(result: dict[str, str]):
             last_name='',
             full_name=result["name"],
             profile_url=result["profile_url"],
-            profile_picture_url=result["profile_picture_url"])
+            profile_picture_url=result["profile"]["full_length_portrait_url"])
