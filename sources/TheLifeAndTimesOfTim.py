@@ -72,11 +72,15 @@ def fetch_source():
     return list(map(dict_to_character, results))
 
 
-def dict_to_character(result: dict[str, str]):
+def dict_to_character(result):
+    name = result["name"].strip()
+    profile_name = result["profile"]["name"].strip()
+    profile_title = result["profile"]["title"].strip()
+
     return Character(
             _id=uuid.uuid5(source_id, result["profile_url"]),
-            first_name=result["name"],
+            first_name=name,
             last_name='',
-            full_name=result["name"],
+            full_name=name,
             profile_url=result["profile_url"],
             profile_picture_url=result["profile"]["full_length_portrait_url"])
