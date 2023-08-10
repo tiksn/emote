@@ -38,7 +38,10 @@ class CharacterListSpider(scrapy.Spider):
     def parse_profile(self, response, profile: dict[str, str]):
         infobox = response.xpath('//*[@id="mw-content-text"]/div/table/tbody')
         profile["title"] = response.xpath('//*[@id="firstHeading"]/text()').get()
-        profile["name"] = infobox.xpath('tr[1]/th/span/text()').get()
+        name = infobox.xpath('tr[1]/th/span/text()').get()
+        if name is None:
+            name = infobox.xpath('tr[1]/th/text()').get()
+        profile["name"] = name
         profile["full_length_portrait_url"] = response.urljoin(
                 infobox.xpath('tr[2]/td/a/img/@src').get()
             )
@@ -61,7 +64,10 @@ def fetch_source():
     return list(map(dict_to_character, results))
 
 
-def dict_to_character(result: dict[str, str]):
+def dict_to_character(result):
+    name = result["name"]
+    profile_name = result["profile"]["name"]
+    profile_title = result["profile"]["title"]
     return Character(
         _id=uuid.uuid5(source_id, result["profile_url"]),
         first_name=result["name"],
