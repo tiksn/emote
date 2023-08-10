@@ -68,10 +68,47 @@ def dict_to_character(result):
     name = result["name"]
     profile_name = result["profile"]["name"]
     profile_title = result["profile"]["title"]
+    longest_name = max([name, profile_name, profile_title], key=len)
+    longest_name_parts = longest_name.split()
+
+    ignore_name_parts = ['Coach', 'Sister', 'Chef', 'Mayor', 'Master', 'Admiral', 'Captain', 'Nurse', '(character)']
+    sanitized_name_parts = [x.strip('(').strip(')') for x in longest_name_parts if x not in ignore_name_parts]
+    sanitized_full_name = " ".join(sanitized_name_parts)
+
+    first_name = None
+    last_name = None
+    full_name = None
+
+    if longest_name == "Main character":
+        first_name = name
+        last_name = ""
+        full_name = name
+    elif len(sanitized_name_parts) == 1:
+        first_name = sanitized_name_parts[0]
+        last_name = ""
+        full_name = sanitized_full_name
+    elif len(sanitized_name_parts) == 2:
+        first_name = sanitized_name_parts[0]
+        last_name = sanitized_name_parts[1]
+        full_name = sanitized_full_name
+    elif len(sanitized_name_parts) == 3:
+        if sanitized_name_parts[0] == "Dr.":
+            first_name = sanitized_name_parts[1]
+            last_name = sanitized_name_parts[2]
+        else:
+            first_name = sanitized_name_parts[0]
+            last_name = sanitized_name_parts[2]
+        full_name = sanitized_full_name
+    else:
+        first_name = sanitized_name_parts[0]
+        last_name = sanitized_name_parts[-1]
+        full_name = sanitized_full_name
+
     return Character(
         _id=uuid.uuid5(source_id, result["profile_url"]),
-        first_name=result["name"],
-        last_name='',
-        full_name=result["name"],
+        first_name=first_name,
+        last_name=last_name,
+        full_name=full_name,
         profile_url=result["profile_url"],
-        profile_picture_url=result["thumbnail_url"])
+        profile_picture_url=result["thumbnail_url"],
+    )
