@@ -1,3 +1,4 @@
+import logging
 import os
 import pickle
 
@@ -54,6 +55,11 @@ def fetch_source(kind: str):
 
     with open(pickle_path, 'wb') as f:
         pickle.dump(pickle_data, f, protocol=pickle.HIGHEST_PROTOCOL)
+
+    for key, value in pickle_data.items():
+        logging.info(f"Extracted {len(value['characters'])} characters from '{value['name']}' ({value['id']})")
+        for character in value['characters']:
+            logging.info(f"'{character['first_name']}' '{character['last_name']}' - '{character['full_name']}'")
 
 
 def character_to_dict(character: Character):
