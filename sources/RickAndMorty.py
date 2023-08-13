@@ -95,10 +95,16 @@ def dict_to_character(result):
     profile_name = profile.get("name", "")
     profile_title = profile.get("title", "")
 
+    name_parts = name.split()
+
+    first_name = name_parts[0]
+    last_name = name_parts[-1]
+    full_name = name
+
     return Character(
         _id=uuid.uuid5(source_id, result["profile_url"]),
-        first_name=name,
-        last_name='',
-        full_name=name,
+        first_name=first_name,
+        last_name=last_name,
+        full_name=full_name,
         profile_url=result["profile_url"],
         profile_picture_url=profile["full_length_portrait_url"])
