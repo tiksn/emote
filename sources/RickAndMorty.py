@@ -17,28 +17,29 @@ class CharacterListSpider(scrapy.Spider):
     start_urls = ["https://rickandmorty.fandom.com/wiki/Category:Characters"]
 
     def parse(self, response, **kwargs):
-        for characterList in response.xpath('//*[@id="mw-content-text"]/div[3]'):
-            for characterGroup in characterList.xpath('div'):
-                for character in characterGroup.xpath("ul/li"):
-                    href = character.xpath('a/@href').get()
-                    name = character.xpath('a/text()').get()
-                    if name.startswith("Category:"):
-                        # yield response.follow(href, self.parse, *kwargs)
-                        pass
-                    else:
-                        profile_url = response.urljoin(
-                            href
-                        )
-                        profile = dict()
-                        yield scrapy.Request(profile_url, self.parse_profile, cb_kwargs={"profile": profile})
-                        yield {
-                            "name": name,
-                            "profile": profile,
-                            "profile_url": profile_url,
-                            "thumbnail_url": response.urljoin(
-                                character.xpath('div/a/img/@src').get()
-                            ),
-                        }
+        for characterListSelector in ['//*[@id="mw-content-text"]/div[3]', '//*[@id="mw-content-text"]/div[2]']:
+            for characterList in response.xpath(characterListSelector):
+                for characterGroup in characterList.xpath('div'):
+                    for character in characterGroup.xpath("ul/li"):
+                        href = character.xpath('a/@href').get()
+                        name = character.xpath('a/text()').get()
+                        if name.startswith("Category:"):
+                            # yield response.follow(href, self.parse, *kwargs)
+                            pass
+                        else:
+                            profile_url = response.urljoin(
+                                href
+                            )
+                            profile = dict()
+                            yield scrapy.Request(profile_url, self.parse_profile, cb_kwargs={"profile": profile})
+                            yield {
+                                "name": name,
+                                "profile": profile,
+                                "profile_url": profile_url,
+                                "thumbnail_url": response.urljoin(
+                                    character.xpath('div/a/img/@src').get()
+                                ),
+                            }
 
         next_page = response.xpath(
             '//*[@id="mw-content-text"]/div[4]/a[contains(@class, "category-page__pagination-next")]/@href').get()
