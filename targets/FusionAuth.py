@@ -1,5 +1,6 @@
 import logging
 import re
+import uuid
 from typing import Dict, List
 
 from fusionauth.fusionauth_client import FusionAuthClient
@@ -13,7 +14,11 @@ logger = get_logger(__name__)
 def populate_target(api_key: str, origins: List[Origin], personas: Dict[str, List[Persona]]):
     client = FusionAuthClient(api_key, 'http://localhost:9011')
 
+    group_names = ['Administrators']
+
     for origin in origins:
+
+        tenant_id = str(origin.ID)
 
         tenant_request = {
             'tenant': {
@@ -38,6 +43,36 @@ def populate_target(api_key: str, origins: List[Origin], personas: Dict[str, Lis
                 logging.info(create_tenant_response.success_response)
             else:
                 logging.error(create_tenant_response.error_response)
+
+        client.set_tenant_id(tenant_id)
+
+        for group_name in group_names:
+
+            group_id = uuid.uuid5(origin.ID, group_name)
+
+            group_request = {
+                'group': {
+                    'name': group_name
+                }
+            }
+
+            retrieve_group_response = client.retrieve_group(group_id)
+
+            if retrieve_group_response.was_successful():
+
+                update_group_response = client.update_group(group_id, group_request)
+                if update_group_response.was_successful():
+                    logging.info(update_group_response.success_response)
+                else:
+                    logging.error(update_group_response.error_response)
+
+            else:
+
+                create_group_response = client.create_group(group_request, group_id)
+                if create_group_response.was_successful():
+                    logging.info(create_group_response.success_response)
+                else:
+                    logging.error(create_group_response.error_response)
 
     for origin_id, origin_personas in personas.items():
 
