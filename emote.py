@@ -11,13 +11,18 @@ class MyCommandsLoader(CLICommandsLoader):
             g.command("update", "update_repository")
         with CommandGroup(self, "source", "source#{}") as g:
             g.command("fetch", "fetch_source")
+        with CommandGroup(self, "target", "target#{}") as g:
+            g.command("populate", "populate_target")
         return OrderedDict(self.command_table)
 
     def load_arguments(self, command):
         with ArgumentsContext(self, "repository update") as ac:
-            ac.argument("kind", type=str)
+            pass
         with ArgumentsContext(self, "source fetch") as ac:
             ac.argument("kind", type=str)
+        with ArgumentsContext(self, "target populate") as ac:
+            ac.argument("kind", type=str)
+            ac.argument("api_key", type=str)
         super(MyCommandsLoader, self).load_arguments(command)
 
 
