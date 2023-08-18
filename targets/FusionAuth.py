@@ -19,34 +19,11 @@ def populate_target(api_key: str, origins: List[Origin], personas: Dict[str, Lis
     administrator_role_name = 'administrator'
 
     for origin in origins:
+        create_or_update_tenant(client, origin)
 
-        tenant_id = str(origin.ID)
+    for origin in origins:
 
-        tenant_request = {
-            'tenant': {
-                'name': origin.Name
-            }
-        }
-
-        retrieve_tenant_response = client.retrieve_tenant(origin.ID)
-
-        if retrieve_tenant_response.was_successful():
-
-            update_tenant_response = client.update_tenant(origin.ID, tenant_request)
-            if update_tenant_response.was_successful():
-                logging.info(update_tenant_response.success_response)
-            else:
-                logging.error(update_tenant_response.error_response)
-
-        else:
-
-            create_tenant_response = client.create_tenant(tenant_request, origin.ID)
-            if create_tenant_response.was_successful():
-                logging.info(create_tenant_response.success_response)
-            else:
-                logging.error(create_tenant_response.error_response)
-
-        client.set_tenant_id(tenant_id)
+        client.set_tenant_id(str(origin.ID))
 
         administrator_role_ids = []
 
@@ -58,6 +35,7 @@ def populate_target(api_key: str, origins: List[Origin], personas: Dict[str, Lis
 
             application_request = {
                 'application': {
+                    'tenantId': str(origin.ID),
                     'name': application_name,
                     'roles': [
                         {
@@ -169,3 +147,30 @@ def populate_target(api_key: str, origins: List[Origin], personas: Dict[str, Lis
                     logging.info(create_user_response.success_response)
                 else:
                     logging.error(create_user_response.error_response)
+
+
+def create_or_update_tenant(client: FusionAuthClient, origin: Origin):
+
+    tenant_request = {
+        'tenant': {
+            'name': origin.Name,
+        }
+    }
+
+    retrieve_tenant_response = client.retrieve_tenant(str(origin.ID))
+
+    if retrieve_tenant_response.was_successful():
+
+        update_tenant_response = client.update_tenant(str(origin.ID), tenant_request)
+        if update_tenant_response.was_successful():
+            logging.info(update_tenant_response.success_response)
+        else:
+            logging.error(update_tenant_response.error_response)
+
+    else:
+
+        create_tenant_response = client.create_tenant(tenant_request, str(origin.ID))
+        if create_tenant_response.was_successful():
+            logging.info(create_tenant_response.success_response)
+        else:
+            logging.error(create_tenant_response.error_response)
