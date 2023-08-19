@@ -11,7 +11,7 @@ from target import Persona, Origin
 logger = get_logger(__name__)
 
 
-def populate_target(api_key: str, origins: List[Origin], personas: Dict[str, List[Persona]]):
+def populate_target(api_key: str, origins: List[Origin], personas: Dict[uuid.UUID, List[Persona]]):
     client = FusionAuthClient(api_key, 'http://localhost:9011')
 
     group_names = ['Administrators']
@@ -28,7 +28,6 @@ def populate_target(api_key: str, origins: List[Origin], personas: Dict[str, Lis
         administrator_role_ids = []
 
         for application_name in application_names:
-
             application_id = uuid.uuid5(origin.ID, f"application-{application_name}")
             administrator_role_id = uuid.uuid5(application_id, f"role-{administrator_role_name}")
             administrator_role_ids.append(str(administrator_role_id))
@@ -37,59 +36,58 @@ def populate_target(api_key: str, origins: List[Origin], personas: Dict[str, Lis
                                          administrator_role_name)
 
         for group_name in group_names:
-
             group_id = uuid.uuid5(origin.ID, f"group-{group_name}")
 
             create_or_update_group(client, group_id, group_name, administrator_role_ids)
 
     for origin_id, origin_personas in personas.items():
 
-        tenant_id = str(origin_id)
-
         origin = next(filter(lambda x: x.ID == origin_id, origins))
         email_domain_name = origin.Name.strip().lower().replace(' ', '-').replace('&', 'and') + '.com'
 
-        client.set_tenant_id(tenant_id)
+        client.set_tenant_id(str(origin_id))
 
         for persona in origin_personas:
             user_name = re.sub('\W+', '-', persona.FullName.strip().lower()).strip('-')
             email = f"{user_name}@{email_domain_name}"
 
-            user_id = str(persona.ID)
-
-            user_request = {
-                'sendSetPasswordEmail': False,
-                'skipVerification': True,
-                'user': {
-                    'tenantId': tenant_id,
-                    'username': user_name,
-                    'email': email,
-                    'password': 'Tiksn.com#1',
-                    'firstName': persona.FirstName,
-                    'lastName': persona.LastName,
-                    'fullName': persona.FullName,
-                    'imageUrl': persona.ProfilePictureUrl,
-                }
-            }
-
-            retrieve_user_response = client.retrieve_user(user_id)
-            if retrieve_user_response.was_successful():
-
-                update_user_response = client.update_user(user_id, user_request)
-                if update_user_response.was_successful():
-                    logging.info(update_user_response.success_response)
-                else:
-                    logging.error(update_user_response.error_response)
-            else:
-
-                create_user_response = client.create_user(user_request, user_id)
-                if create_user_response.was_successful():
-                    logging.info(create_user_response.success_response)
-                else:
-                    logging.error(create_user_response.error_response)
+            create_or_update_user(client, origin_id, user_name, email, persona)
 
 
-def create_or_update_group(client: FusionAuthClient, group_id: uuid.UUID, group_name: str, administrator_role_ids: list[str]):
+def create_or_update_user(client: FusionAuthClient, origin_id: uuid.UUID, user_name: str, email: str, persona: Persona):
+    user_request = {
+        'sendSetPasswordEmail': False,
+        'skipVerification': True,
+        'user': {
+            'tenantId': str(origin_id),
+            'username': user_name,
+            'email': email,
+            'password': 'Tiksn.com#1',
+            'firstName': persona.FirstName,
+            'lastName': persona.LastName,
+            'fullName': persona.FullName,
+            'imageUrl': persona.ProfilePictureUrl,
+        }
+    }
+    retrieve_user_response = client.retrieve_user(str(persona.ID))
+    if retrieve_user_response.was_successful():
+
+        update_user_response = client.update_user(str(persona.ID), user_request)
+        if update_user_response.was_successful():
+            logging.info(update_user_response.success_response)
+        else:
+            logging.error(update_user_response.error_response)
+    else:
+
+        create_user_response = client.create_user(user_request, str(persona.ID))
+        if create_user_response.was_successful():
+            logging.info(create_user_response.success_response)
+        else:
+            logging.error(create_user_response.error_response)
+
+
+def create_or_update_group(client: FusionAuthClient, group_id: uuid.UUID, group_name: str,
+                           administrator_role_ids: list[str]):
     group_request = {
         'group': {
             'name': group_name
@@ -159,7 +157,6 @@ def create_or_update_application(client: FusionAuthClient, origin: Origin,
 
 
 def create_or_update_tenant(client: FusionAuthClient, origin: Origin):
-
     tenant_request = {
         'tenant': {
             'name': origin.Name,
