@@ -40,30 +40,7 @@ def populate_target(api_key: str, origins: List[Origin], personas: Dict[str, Lis
 
             group_id = uuid.uuid5(origin.ID, f"group-{group_name}")
 
-            group_request = {
-                'group': {
-                    'name': group_name
-                },
-                'roleIds': administrator_role_ids,
-            }
-
-            retrieve_group_response = client.retrieve_group(group_id)
-
-            if retrieve_group_response.was_successful():
-
-                update_group_response = client.update_group(group_id, group_request)
-                if update_group_response.was_successful():
-                    logging.info(update_group_response.success_response)
-                else:
-                    logging.error(update_group_response.error_response)
-
-            else:
-
-                create_group_response = client.create_group(group_request, group_id)
-                if create_group_response.was_successful():
-                    logging.info(create_group_response.success_response)
-                else:
-                    logging.error(create_group_response.error_response)
+            create_or_update_group(client, group_id, group_name, administrator_role_ids)
 
     for origin_id, origin_personas in personas.items():
 
@@ -110,6 +87,31 @@ def populate_target(api_key: str, origins: List[Origin], personas: Dict[str, Lis
                     logging.info(create_user_response.success_response)
                 else:
                     logging.error(create_user_response.error_response)
+
+
+def create_or_update_group(client: FusionAuthClient, group_id: uuid.UUID, group_name: str, administrator_role_ids: list[str]):
+    group_request = {
+        'group': {
+            'name': group_name
+        },
+        'roleIds': administrator_role_ids,
+    }
+    retrieve_group_response = client.retrieve_group(group_id)
+    if retrieve_group_response.was_successful():
+
+        update_group_response = client.update_group(group_id, group_request)
+        if update_group_response.was_successful():
+            logging.info(update_group_response.success_response)
+        else:
+            logging.error(update_group_response.error_response)
+
+    else:
+
+        create_group_response = client.create_group(group_request, group_id)
+        if create_group_response.was_successful():
+            logging.info(create_group_response.success_response)
+        else:
+            logging.error(create_group_response.error_response)
 
 
 def create_or_update_application(client: FusionAuthClient, origin: Origin,
