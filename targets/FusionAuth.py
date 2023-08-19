@@ -33,45 +33,8 @@ def populate_target(api_key: str, origins: List[Origin], personas: Dict[str, Lis
             administrator_role_id = uuid.uuid5(application_id, f"role-{administrator_role_name}")
             administrator_role_ids.append(str(administrator_role_id))
 
-            application_request = {
-                'application': {
-                    'tenantId': str(origin.ID),
-                    'name': application_name,
-                    'roles': [
-                        {
-                            'id': str(administrator_role_id),
-                            'name': administrator_role_name,
-                            'description': f"'{administrator_role_name}' for '{application_name}'",
-                            'isSuperRole': True,
-                        }
-                    ],
-                    'oauthConfiguration': {
-                        'authorizedRedirectURLs': [
-                            'http://127.0.0.1/sample-wpf-app',
-                        ],
-                        'generateRefreshTokens': True,
-                        'proofKeyForCodeExchangePolicy': 'Required',
-                    },
-                }
-            }
-
-            retrieve_application_response = client.retrieve_application(application_id)
-
-            if retrieve_application_response.was_successful():
-
-                update_application_response = client.update_application(application_id, application_request)
-                if update_application_response.was_successful():
-                    logging.info(update_application_response.success_response)
-                else:
-                    logging.error(update_application_response.error_response)
-
-            else:
-
-                create_application_response = client.create_application(application_request, application_id)
-                if create_application_response.was_successful():
-                    logging.info(create_application_response.success_response)
-                else:
-                    logging.error(create_application_response.error_response)
+            create_or_update_application(client, origin, application_id, application_name, administrator_role_id,
+                                         administrator_role_name)
 
         for group_name in group_names:
 
@@ -147,6 +110,50 @@ def populate_target(api_key: str, origins: List[Origin], personas: Dict[str, Lis
                     logging.info(create_user_response.success_response)
                 else:
                     logging.error(create_user_response.error_response)
+
+
+def create_or_update_application(client: FusionAuthClient, origin: Origin,
+                                 application_id: uuid.UUID,
+                                 application_name: str,
+                                 administrator_role_id: uuid.UUID,
+                                 administrator_role_name: str):
+    application_request = {
+        'application': {
+            'tenantId': str(origin.ID),
+            'name': application_name,
+            'roles': [
+                {
+                    'id': str(administrator_role_id),
+                    'name': administrator_role_name,
+                    'description': f"'{administrator_role_name}' for '{application_name}'",
+                    'isSuperRole': True,
+                }
+            ],
+            'oauthConfiguration': {
+                'authorizedRedirectURLs': [
+                    'http://127.0.0.1/sample-wpf-app',
+                ],
+                'generateRefreshTokens': True,
+                'proofKeyForCodeExchangePolicy': 'Required',
+            },
+        }
+    }
+    retrieve_application_response = client.retrieve_application(application_id)
+    if retrieve_application_response.was_successful():
+
+        update_application_response = client.update_application(application_id, application_request)
+        if update_application_response.was_successful():
+            logging.info(update_application_response.success_response)
+        else:
+            logging.error(update_application_response.error_response)
+
+    else:
+
+        create_application_response = client.create_application(application_request, application_id)
+        if create_application_response.was_successful():
+            logging.info(create_application_response.success_response)
+        else:
+            logging.error(create_application_response.error_response)
 
 
 def create_or_update_tenant(client: FusionAuthClient, origin: Origin):
