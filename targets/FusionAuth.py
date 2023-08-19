@@ -53,6 +53,41 @@ def populate_target(api_key: str, origins: List[Origin], personas: Dict[uuid.UUI
 
             create_or_update_user(client, origin_id, user_name, email, persona)
 
+            for application_name in application_names:
+                application_id = uuid.uuid5(origin.ID, f"application-{application_name}")
+
+                create_or_update_registration(client, origin.ID, persona.ID, application_id)
+
+
+def create_or_update_registration(client: FusionAuthClient,
+                                  origin_id: uuid.UUID,
+                                  user_id: uuid.UUID,
+                                  application_id: uuid.UUID):
+    roles = []
+    registration_request = {
+        'skipRegistrationVerification': True,
+        'registration': {
+            'tenantId': str(origin_id),
+            'applicationId': str(application_id),
+            'roles': roles,
+        }
+    }
+    retrieve_registration_response = client.retrieve_registration(str(user_id), str(application_id))
+    if retrieve_registration_response.was_successful():
+
+        update_registration_response = client.update_registration(str(user_id), registration_request)
+        if update_registration_response.was_successful():
+            logging.info(update_registration_response.success_response)
+        else:
+            logging.error(update_registration_response.error_response)
+    else:
+
+        create_registration_response = client.register(registration_request, str(user_id))
+        if create_registration_response.was_successful():
+            logging.info(create_registration_response.success_response)
+        else:
+            logging.error(create_registration_response.error_response)
+
 
 def create_or_update_user(client: FusionAuthClient, origin_id: uuid.UUID, user_name: str, email: str, persona: Persona):
     user_request = {
