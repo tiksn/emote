@@ -170,6 +170,7 @@ def create_or_update_application(client: FusionAuthClient, origin: Origin,
                 ],
                 'generateRefreshTokens': True,
                 'proofKeyForCodeExchangePolicy': 'Required',
+                'enabledGrants': ['authorization_code', 'refresh_token'],
             },
         }
     }
