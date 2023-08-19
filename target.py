@@ -41,7 +41,7 @@ def populate_target(kind: str, api_key: str):
     populate = getattr(target, "populate_target")
 
     engine = create_engine(
-        "mysql+mysqlconnector://root@127.0.0.1:3306/emote"
+        "mysql+mysqlconnector://root@127.0.0.1:3307/emote"
     )
 
     with engine.connect() as conn:
