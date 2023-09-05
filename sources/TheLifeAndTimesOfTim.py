@@ -1,10 +1,11 @@
 import uuid
 from uuid import UUID
 
-from source import Character
 import scrapy
-from scrapy.crawler import CrawlerProcess
 from knack.log import get_logger
+from scrapy.crawler import CrawlerProcess
+
+from source import Character, CharacterType
 
 logger = get_logger(__name__)
 
@@ -25,8 +26,11 @@ class CharacterListSpider(scrapy.Spider):
                     )
                     profile = dict()
                     yield scrapy.Request(profile_url, self.parse_profile, cb_kwargs={"profile": profile})
+                    name = character.xpath('a/text()').get()
+                    is_main_character = name.casefold() == 'Tim'.casefold()
                     yield {
-                        "name": character.xpath('a/text()').get(),
+                        "name": name,
+                        "is_main_character": is_main_character,
                         "profile": profile,
                         "profile_url": profile_url,
                         "thumbnail_url": response.urljoin(
@@ -78,9 +82,10 @@ def dict_to_character(result):
     profile_title = result["profile"]["title"].strip()
 
     return Character(
-            _id=uuid.uuid5(source_id, result["profile_url"]),
-            first_name=name,
-            last_name='',
-            full_name=name,
-            profile_url=result["profile_url"],
-            profile_picture_url=result["profile"]["full_length_portrait_url"])
+        _id=uuid.uuid5(source_id, result["profile_url"]),
+        first_name=name,
+        last_name='',
+        full_name=name,
+        _type=CharacterType.PROTAGONIST if result["is_main_character"] else CharacterType.UNKNOWN,
+        profile_url=result["profile_url"],
+        profile_picture_url=result["profile"]["full_length_portrait_url"])
