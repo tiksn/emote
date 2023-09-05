@@ -52,6 +52,7 @@ def update_repository():
                             'first_name': c['first_name'],
                             'last_name': c['last_name'],
                             'full_name': c['full_name'],
+                            'type': c['type'],
                             'profile_url': c['profile_url'],
                             'profile_picture_url': c['profile_picture_url'],
                         }
@@ -64,6 +65,7 @@ def update_repository():
                             'first_name': c['first_name'],
                             'last_name': c['last_name'],
                             'full_name': c['full_name'],
+                            'type': c['type'],
                             'profile_url': c['profile_url'],
                             'profile_picture_url': c['profile_picture_url'],
                         }
