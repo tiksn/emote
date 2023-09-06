@@ -4,15 +4,18 @@ from uuid import UUID
 from knack.log import get_logger
 from sqlalchemy import create_engine, MetaData, Table, select
 
+from source import CharacterType
+
 logger = get_logger(__name__)
 
 
 class Persona:
-    def __init__(self, _id, first_name, last_name, full_name, profile_picture_url):
+    def __init__(self, _id, first_name, last_name, full_name, is_admin, profile_picture_url):
         self.ID = _id
         self.FirstName = first_name
         self.LastName = last_name
         self.FullName = full_name
+        self.IsAdmin = is_admin
         self.ProfilePictureUrl = profile_picture_url
 
 
@@ -67,11 +70,15 @@ def populate_target(kind: str, api_key: str):
         stmt = select(characters_table)
         character_results = conn.execute(stmt)
 
-        for character_id, source_id, character_first_name, character_last_name, character_full_name, character_profile_url, character_profile_picture_url in character_results:
+        for character_id, source_id, character_first_name, character_last_name, character_full_name, character_type, character_profile_url, character_profile_picture_url in character_results:
             character_id = UUID(bytes=bytes(character_id))
             origin_id = UUID(bytes=bytes(source_id))
 
-            persona = Persona(character_id, character_first_name, character_last_name, character_full_name,
+            persona = Persona(character_id,
+                              character_first_name,
+                              character_last_name,
+                              character_full_name,
+                              character_type == CharacterType.PROTAGONIST.value,
                               character_profile_picture_url)
             personas[origin_id].append(persona)
 

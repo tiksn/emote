@@ -1,10 +1,11 @@
 import uuid
 from uuid import UUID
 
-from source import Character
 import scrapy
-from scrapy.crawler import CrawlerProcess
 from knack.log import get_logger
+from scrapy.crawler import CrawlerProcess
+
+from source import Character, CharacterType
 
 logger = get_logger(__name__)
 
@@ -89,6 +90,22 @@ def fetch_source():
     return list(map(dict_to_character, results))
 
 
+def convert_character_type(full_name):
+    main_characters = [
+        'Rick Sanchez',
+        'Morty Smith',
+        'Summer Smith',
+        'Beth Smith',
+        'Jerry Smith',
+    ]
+
+    for _, main_character in enumerate(main_characters):
+        if full_name.casefold() == main_character.casefold():
+            return CharacterType.PROTAGONIST
+
+    return CharacterType.UNKNOWN
+
+
 def dict_to_character(result):
     name = result["name"].strip()
     profile = result["profile"]
@@ -101,10 +118,13 @@ def dict_to_character(result):
     last_name = name_parts[-1]
     full_name = name
 
+    character_type = convert_character_type(full_name)
+
     return Character(
         _id=uuid.uuid5(source_id, result["profile_url"]),
         first_name=first_name,
         last_name=last_name,
         full_name=full_name,
+        _type=character_type,
         profile_url=result["profile_url"],
         profile_picture_url=profile["full_length_portrait_url"])

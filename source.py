@@ -1,20 +1,30 @@
 import logging
 import os
 import pickle
-
-import sources
+from enum import Enum
 
 from knack.log import get_logger
+
+import sources
 
 logger = get_logger(__name__)
 
 
+class CharacterType(Enum):
+    ANTAGONIST = -1
+    UNKNOWN = 0
+    PROTAGONIST = 1
+    DEUTERAGONIST = 2
+    TRITAGONIST = 3
+
+
 class Character:
-    def __init__(self, _id, first_name, last_name, full_name, profile_url, profile_picture_url):
+    def __init__(self, _id, first_name, last_name, full_name, _type, profile_url, profile_picture_url):
         self.ID = _id
         self.FirstName = first_name
         self.LastName = last_name
         self.FullName = full_name
+        self.Type = _type
         self.ProfileUrl = profile_url
         self.ProfilePictureUrl = profile_picture_url
 
@@ -68,6 +78,7 @@ def character_to_dict(character: Character):
         'first_name': character.FirstName,
         'last_name': character.LastName,
         'full_name': character.FullName,
+        'type': character.Type.value,
         'profile_url': character.ProfileUrl,
         'profile_picture_url': character.ProfilePictureUrl,
     }
