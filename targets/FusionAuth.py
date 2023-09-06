@@ -58,6 +58,32 @@ def populate_target(api_key: str, origins: List[Origin], personas: Dict[uuid.UUI
 
                 create_or_update_registration(client, origin.ID, persona.ID, application_id)
 
+            for group_name in group_names:
+                group_id = uuid.uuid5(origin.ID, f"group-{group_name}")
+
+                create_or_update_members(client, group_id, persona)
+
+
+def create_or_update_members(client: FusionAuthClient,
+                             group_id: uuid.UUID,
+                             persona: Persona):
+    if persona.IsAdmin:
+        members_request = {
+            'members': {
+                str(group_id): [
+                    {
+                        'userId': str(persona.ID)
+                    },
+                ]
+            },
+        }
+
+        create_members_response = client.create_group_members(members_request)
+        if create_members_response.was_successful():
+            logging.info(create_members_response.success_response)
+        else:
+            logging.error(create_members_response.error_response)
+
 
 def create_or_update_registration(client: FusionAuthClient,
                                   origin_id: uuid.UUID,
