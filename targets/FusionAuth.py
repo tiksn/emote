@@ -17,9 +17,13 @@ def populate_target(api_key: str, origins: List[Origin], personas: Dict[uuid.UUI
     group_names = ['Administrators']
     application_names = ['Fossa', 'Verdant', 'Yabby']
     administrator_role_name = 'administrator'
+    main_key_id = uuid.UUID('a3aee1ec-c965-4ec8-97b2-c0245bc1c5ec')
+    main_key_name = 'MainKey'
+
+    create_or_update_key(client, main_key_id, main_key_name)
 
     for origin in origins:
-        create_or_update_tenant(client, origin)
+        create_or_update_tenant(client, origin, main_key_id)
 
     for origin in origins:
 
@@ -218,10 +222,16 @@ def create_or_update_application(client: FusionAuthClient, origin: Origin,
             logging.error(create_application_response.error_response)
 
 
-def create_or_update_tenant(client: FusionAuthClient, origin: Origin):
+def create_or_update_tenant(client: FusionAuthClient,
+                            origin: Origin,
+                            key_id: uuid.UUID):
     tenant_request = {
         'tenant': {
             'name': origin.Name,
+            'jwtConfiguration': {
+                'accessTokenKeyId': str(key_id),
+                'idTokenKeyId': str(key_id),
+            }
         }
     }
 
@@ -242,3 +252,30 @@ def create_or_update_tenant(client: FusionAuthClient, origin: Origin):
             logging.info(create_tenant_response.success_response)
         else:
             logging.error(create_tenant_response.error_response)
+
+
+def create_or_update_key(client: FusionAuthClient,
+                         key_id: uuid.UUID,
+                         key_name: str):
+    key_request = {
+        'key': {
+            'algorithm': 'RS256',
+            'name': key_name,
+            'length': 2048,
+        }
+    }
+    retrieve_key_response = client.retrieve_key(str(key_id))
+    if retrieve_key_response.was_successful():
+
+        update_key_response = client.update_key(str(key_id), key_request)
+        if update_key_response.was_successful():
+            logging.info(update_key_response.success_response)
+        else:
+            logging.error(update_key_response.error_response)
+    else:
+
+        create_key_response = client.generate_key(key_request, str(key_id))
+        if create_key_response.was_successful():
+            logging.info(create_key_response.success_response)
+        else:
+            logging.error(create_key_response.error_response)
