@@ -3,4 +3,4 @@ ipfshttpclient==0.7.0
 knack==0.11.0
 mysql-connector-python==8.2.0
 Scrapy==2.11.0
-SQLAlchemy==2.0.22
+SQLAlchemy==2.0.23
