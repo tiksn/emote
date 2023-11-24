@@ -39,37 +39,37 @@ def update_repository():
                     )
                     conn.execute(stmt)
 
-            for c in v['characters']:
+                for c in v['characters']:
 
-                stmt = select(characters_table).filter_by(id=c['id'].bytes)
-                results = conn.execute(stmt)
+                    stmt = select(characters_table).filter_by(id=c['id'].bytes)
+                    results = conn.execute(stmt)
 
-                if results.rowcount == 0:
-                    stmt = insert(characters_table).values([
-                        {
-                            'id': c['id'].bytes,
-                            'source_id': v['id'].bytes,
-                            'first_name': c['first_name'],
-                            'last_name': c['last_name'],
-                            'full_name': c['full_name'],
-                            'type': c['type'],
-                            'profile_url': c['profile_url'],
-                            'profile_picture_url': c['profile_picture_url'],
-                        }
-                    ])
-                    conn.execute(stmt)
-                else:
-                    stmt = update(characters_table).filter_by(id=c['id'].bytes).values(
-                        {
-                            'source_id': v['id'].bytes,
-                            'first_name': c['first_name'],
-                            'last_name': c['last_name'],
-                            'full_name': c['full_name'],
-                            'type': c['type'],
-                            'profile_url': c['profile_url'],
-                            'profile_picture_url': c['profile_picture_url'],
-                        }
-                    )
-                    conn.execute(stmt)
+                    if results.rowcount == 0:
+                        stmt = insert(characters_table).values([
+                            {
+                                'id': c['id'].bytes,
+                                'source_id': v['id'].bytes,
+                                'first_name': c['first_name'],
+                                'last_name': c['last_name'],
+                                'full_name': c['full_name'],
+                                'type': c['type'],
+                                'profile_url': c['profile_url'],
+                                'profile_picture_url': c['profile_picture_url'],
+                            }
+                        ])
+                        conn.execute(stmt)
+                    else:
+                        stmt = update(characters_table).filter_by(id=c['id'].bytes).values(
+                            {
+                                'source_id': v['id'].bytes,
+                                'first_name': c['first_name'],
+                                'last_name': c['last_name'],
+                                'full_name': c['full_name'],
+                                'type': c['type'],
+                                'profile_url': c['profile_url'],
+                                'profile_picture_url': c['profile_picture_url'],
+                            }
+                        )
+                        conn.execute(stmt)
 
             conn.commit()
