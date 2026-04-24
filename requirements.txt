@@ -1,6 +1,6 @@
 fusionauth-client==1.64.0
 ipfshttpclient==0.7.0
 knack==0.13.0
-mysql-connector-python==9.6.0
+mysql-connector-python==9.7.0
 Scrapy==2.15.1
 SQLAlchemy==2.0.49
