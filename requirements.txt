@@ -1,4 +1,4 @@
-fusionauth-client==1.65.0
+fusionauth-client==1.67.0
 ipfshttpclient==0.7.0
 knack==0.14.0
 mysql-connector-python==9.7.0
